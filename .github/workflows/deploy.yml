@@ -56,7 +56,6 @@ jobs:
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
             cd /var/www/faceit-checker/backend
-            nvm use 22
             yarn install --frozen-lockfile --production
 
       - name: Restart application with PM2
