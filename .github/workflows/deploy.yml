@@ -37,7 +37,7 @@ jobs:
           remote_user: ${{ secrets.DEPLOY_USER }}
           remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
 
-      - name: Deploy to package.json and yarn.lock
+      - name: Deploying package.json and yarn.lock to server
         uses: burnett01/rsync-deployments@7.0.2
         with:
           switches: -avzr --delete
