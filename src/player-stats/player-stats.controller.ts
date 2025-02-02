@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { PlayerStatsService } from './player-stats.service';
 import { PlayerStatsInputDto } from './dtos/PlayerStatsInputDto';
 
@@ -6,7 +6,7 @@ import { PlayerStatsInputDto } from './dtos/PlayerStatsInputDto';
 export class PlayerStatsController {
   constructor(protected readonly playerStatsService: PlayerStatsService) {}
 
-  @Post('')
+  @Get()
   public getPlayerStats(@Body() dto: PlayerStatsInputDto) {
     return this.playerStatsService.getPlayerStats(dto.inputRaw);
   }
