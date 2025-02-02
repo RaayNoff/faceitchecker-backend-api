@@ -55,6 +55,7 @@ jobs:
           password: ${{ secrets.DEPLOY_PASSWORD }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
           script: |
+            which node
             cd /var/www/faceit-checker/backend
             yarn install --frozen-lockfile --production
 
