@@ -49,7 +49,9 @@ jobs:
 
       - name: Install dependencies on server
         run: |
-          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+          echo "$DEPLOY_SSH_KEY" > /tmp/deploy_key.pem
+          chmod 600 /tmp/deploy_key.pem
+          ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             which node
             cd /var/www/faceit-checker/backend
             yarn install --frozen-lockfile --production
@@ -60,9 +62,12 @@ jobs:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
 
 
+
       - name: Restart application with PM2
         run: |
-          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+          echo "$DEPLOY_SSH_KEY" > /tmp/deploy_key.pem
+          chmod 600 /tmp/deploy_key.pem
+          ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             cd /var/www/
             pm2 restart faceit-checker-backend || pm2 start ecosystem.config.js
           EOF
