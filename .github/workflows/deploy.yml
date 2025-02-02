@@ -54,7 +54,7 @@ jobs:
           ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             which node
             cd ${{secrets.DEPLOY_DIR}}
-            yarn install --frozen-lockfile --production
+            yarn install
           EOF
         env:
           DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
