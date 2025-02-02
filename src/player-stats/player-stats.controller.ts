@@ -1,13 +1,13 @@
-import { Body, Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { PlayerStatsService } from './player-stats.service';
-import { PlayerStatsInputDto } from './dtos/PlayerStatsInputDto';
+import { PlayerStatsInputSearchDto } from './dtos/PlayerStatsInputSearchDto';
 
 @Controller('player-stats')
 export class PlayerStatsController {
   constructor(protected readonly playerStatsService: PlayerStatsService) {}
 
   @Get()
-  public getPlayerStats(@Body() dto: PlayerStatsInputDto) {
+  public getPlayerStats(@Query() dto: PlayerStatsInputSearchDto) {
     return this.playerStatsService.getPlayerStats(dto.inputRaw);
   }
 }
