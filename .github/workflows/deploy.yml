@@ -31,10 +31,23 @@ jobs:
         uses: burnett01/rsync-deployments@7.0.2
         with:
           switches: -avzr --delete
-          path: dist/
+          path: dist/ package.json yarn.lock
           remote_path: /var/www/faceit-checker/backend
           remote_host: ${{ secrets.DEPLOY_HOST }}
           remote_user: ${{ secrets.DEPLOY_USER }}
           remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
+
+      - name: Install dependencies on server
+        run: |
+          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+            cd /var/www/faceit-checker/backend
+            yarn install --frozen-lockfile --production
+          EOF
+
+      - name: Restart application with PM2
+        run: |
+          ssh -i ${{ secrets.DEPLOY_SSH_KEY }} ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
+            pm2 restart faceit-checker-backend || pm2 start ./main.js --name="faceit-checker-backend"
+          EOF
 
 
