@@ -13,7 +13,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     PlayerStatsModule,
     ThrottlerModule.forRoot([
       {
-        ttl: 10,
+        ttl: 10000,
         limit: 10,
       },
     ]),
