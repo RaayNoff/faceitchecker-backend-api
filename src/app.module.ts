@@ -6,17 +6,17 @@ import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
-    SteamApiModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    PlayerStatsModule,
     ThrottlerModule.forRoot([
       {
         ttl: 10000,
         limit: 10,
       },
     ]),
+    SteamApiModule,
+    PlayerStatsModule,
   ],
   controllers: [],
   providers: [],
