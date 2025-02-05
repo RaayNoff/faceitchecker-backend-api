@@ -27,7 +27,7 @@ export class PlayerStatsService {
     constructor(
     private readonly HttpService: HttpService,
     private readonly configService: ConfigService,
-    private readonly steampAPIService: SteamApiService,
+    private readonly steamAPIService: SteamApiService,
     ) {}
 
     public async getPlayerStats(
@@ -43,7 +43,7 @@ export class PlayerStatsService {
 
         const fetchFunction = this.FetchByTypeMap.get(inputType);
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
+
         return fetchFunction ? await fetchFunction(trimmedInput) : null;
     }
 
@@ -87,7 +87,7 @@ export class PlayerStatsService {
 
         const vanityName = customUrlMatch[1];
 
-        const zalupa = await this.steampAPIService.resolveVanity(vanityName);
+        const zalupa = await this.steamAPIService.resolveVanity(vanityName);
 
         return zalupa.steamid;
     }
