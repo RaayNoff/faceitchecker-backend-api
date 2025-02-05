@@ -9,25 +9,29 @@ export function LogRequest(): MethodDecorator {
         const originalMethod = descriptor.value;
 
         descriptor.value = async function (...args: any[]) {
-            // Последний аргумент метода контроллера — это Request (Nest сам передаёт его)
-            const {request}: ContextDto = args[args.length - 1]; // В NestJS первым параметром в метод контроллера всегда передаётся `req`
+            const { request, ipAddress }: ContextDto = args[args.length - 1];
 
             if (!request || !request.method) {
                 logger.warn(`@LogRequest: не удалось получить объект типа request`);
                 return originalMethod.apply(this, args);
             }
 
-            const method = request.method;
-            const url = request.url;
-            const ip = request.ip;
-            const params = request.params;
-            const body = request.body;
-            const query = request.query;
-            const timestamp = new Date().toISOString();
+            const logParts: string[] = [];
+            logParts.push(request.method);
+            if (ipAddress) {logParts.push(ipAddress);}
+            logParts.push(new Date().toISOString().replace('T', ' ').substring(0, 16));
+            logParts.push(`Handler: ${String(propertyKey)}`);
 
-            logger.log(
-                `${method} ${url} - ${ip} - ${timestamp} - Handler: ${String(propertyKey)} - Params: ${JSON.stringify(params)} - Body: ${JSON.stringify(body)} - Query: ${JSON.stringify(query)}`
-            );
+            if (request.params && Object.keys(request.params).length)
+            {logParts.push(`Params: ${JSON.stringify(request.params)}`);}
+
+            if (request.body && Object.keys(request.body).length)
+            {logParts.push(`Body: ${JSON.stringify(request.body)}`);}
+
+            if (request.query && Object.keys(request.query).length)
+            {logParts.push(`Query: ${JSON.stringify(request.query)}`);}
+
+            logger.log(logParts.join(' - '));
 
             return originalMethod.apply(this, args);
         };

@@ -36,7 +36,7 @@ export default tseslint.config(
         },
       ],
       curly: ['error', 'all'],
-      "no-useless-escape": ['off']
+      "no-useless-escape": ['off'],
     },
   },
 );

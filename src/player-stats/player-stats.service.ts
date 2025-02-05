@@ -36,8 +36,6 @@ export class PlayerStatsService {
         const trimmedInput = rawFromInput.trim();
 
         const inputType = this.detectInputType(trimmedInput);
-        console.log({ trimmedInput });
-        console.log({ inputType });
 
         if (!inputType) {
             return null;
@@ -95,7 +93,7 @@ export class PlayerStatsService {
     }
 
     private test() {
-        
+
     }
 
     private async fetchPlayer(params: Record<string, string>) {
