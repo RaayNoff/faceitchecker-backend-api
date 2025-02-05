@@ -26,6 +26,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.0.3",
     "@nestjs/throttler": "^6.4.0",
     "@supercharge/request-ip": "^1.2.0",
     "axios": "^1.7.9",
