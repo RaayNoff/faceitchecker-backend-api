@@ -1,16 +1,14 @@
 // @ts-check
 import eslint from '@eslint/js';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   {
-    ignores: ['eslint.config.mjs'],
+    ignores: ['eslint.config.mjs', './dist'],
   },
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
   {
     languageOptions: {
       globals: {
@@ -23,6 +21,21 @@ export default tseslint.config(
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
       },
+    },
+    rules: {
+      indent: [
+        'warn',
+        4,
+        {
+          SwitchCase: 1,
+          ignoredNodes: [
+            'FunctionExpression > .params[decorators.length > 0]',
+            'FunctionExpression > .params > :matches(Decorator, :not(:first-child))',
+            'ClassBody.body > PropertyDefinition[decorators.length > 0] > .key',
+          ],
+        },
+      ],
+      curly: ['error', 'all'],
     },
   },
 );

@@ -5,8 +5,8 @@ import { HttpModule } from '@nestjs/axios';
 import { SteamApiModule } from '../steam/steam-api.module';
 
 @Module({
-  imports: [HttpModule, SteamApiModule],
-  controllers: [PlayerStatsController],
-  providers: [PlayerStatsService],
+    imports: [HttpModule, SteamApiModule],
+    controllers: [PlayerStatsController],
+    providers: [PlayerStatsService],
 })
 export class PlayerStatsModule {}

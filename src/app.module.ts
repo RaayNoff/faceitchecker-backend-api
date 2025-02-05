@@ -5,20 +5,20 @@ import { PlayerStatsModule } from './player-stats/player-stats.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-    }),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 10000,
-        limit: 10,
-      },
-    ]),
-    SteamApiModule,
-    PlayerStatsModule,
-  ],
-  controllers: [],
-  providers: [],
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+        }),
+        ThrottlerModule.forRoot([
+            {
+                ttl: 10000,
+                limit: 10,
+            },
+        ]),
+        SteamApiModule,
+        PlayerStatsModule,
+    ],
+    controllers: [],
+    providers: [],
 })
 export class AppModule {}

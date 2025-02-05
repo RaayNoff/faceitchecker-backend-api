@@ -7,29 +7,29 @@ import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SteamApiService {
-  constructor(
+    constructor(
     private readonly HttpService: HttpService,
     private readonly configService: ConfigService,
-  ) {}
+    ) {}
 
-  public async resolveVanity(vanityName: string) {
-    const { data } = await firstValueFrom(
-      this.HttpService.get<IResolveVanitySteamResponse>(
-        SteamAPIUrlEnum.ResolveVanityURL,
-        {
-          method: 'GET',
-          headers: {
-            'x-webapi-key': this.configService.get<string>(
-              'STEAM_API_AUTHORIZATION_TOKEN',
+    public async resolveVanity(vanityName: string) {
+        const { data } = await firstValueFrom(
+            this.HttpService.get<IResolveVanitySteamResponse>(
+                SteamAPIUrlEnum.ResolveVanityURL,
+                {
+                    method: 'GET',
+                    headers: {
+                        'x-webapi-key': this.configService.get<string>(
+                            'STEAM_API_AUTHORIZATION_TOKEN',
+                        ),
+                    },
+                    params: {
+                        vanityurl: vanityName,
+                    },
+                },
             ),
-          },
-          params: {
-            vanityurl: vanityName,
-          },
-        },
-      ),
-    );
+        );
 
-    return data.response;
-  }
+        return data.response;
+    }
 }

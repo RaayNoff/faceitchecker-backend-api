@@ -6,10 +6,10 @@ import { ThrottlerGuard } from '@nestjs/throttler';
 @Controller('player-stats')
 @UseGuards(ThrottlerGuard)
 export class PlayerStatsController {
-  constructor(protected readonly playerStatsService: PlayerStatsService) {}
+    constructor(protected readonly playerStatsService: PlayerStatsService) {}
 
   @Get()
-  public getPlayerStats(@Query() dto: PlayerStatsInputSearchDto) {
-    return this.playerStatsService.getPlayerStats(dto.inputRaw);
-  }
+    public getPlayerStats(@Query() dto: PlayerStatsInputSearchDto) {
+        return this.playerStatsService.getPlayerStats(dto.inputRaw);
+    }
 }
