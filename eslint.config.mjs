@@ -37,6 +37,7 @@ export default tseslint.config(
       ],
       curly: ['error', 'all'],
       "no-useless-escape": ['off'],
+      "@typescript-eslint/ no-explicit-any": ['off']
     },
   },
 );

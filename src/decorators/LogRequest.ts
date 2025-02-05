@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import { Request } from 'express';
 import { ContextDto } from './Context';
 
 const logger = new Logger('HTTP');
