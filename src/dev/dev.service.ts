@@ -12,7 +12,12 @@ export class DevService {
     }
 
     public async checkAccess(dto: DevPasswordDto) {
-        if (dto.password === this.configService.get<string>('DEV_PASSWORD')) {
+        const configPass = this.configService.get<string>('DEV_PASSWORD');
+
+        console.log({ configPass });
+        console.log({'dto.password': dto.password});
+
+        if (dto.password === configPass) {
             return {
                 success: true,
             };
