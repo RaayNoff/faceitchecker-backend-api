@@ -53,7 +53,7 @@ jobs:
           chmod 600 /tmp/deploy_key.pem
           ssh -i /tmp/deploy_key.pem -o StrictHostKeyChecking=no ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }} << 'EOF'
             which node
-            cd ${{secrets.DEPLOY_DIR}}
+            cd ${{secrets.DEPLOY_DIST_DIR_DEV}}
             yarn install --frozen-lockfile
           EOF
         env:
