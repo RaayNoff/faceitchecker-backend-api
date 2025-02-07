@@ -32,7 +32,7 @@ jobs:
         with:
           switches: -avzr --delete
           path: dist/
-          remote_path: ${{ secrets.DEPLOY_DIST_DIR_DEV }}
+          remote_path: ${{ secrets.DEPLOY_DIR_DEV }}
           remote_host: ${{ secrets.DEPLOY_HOST }}
           remote_user: ${{ secrets.DEPLOY_USER }}
           remote_key: ${{ secrets.DEPLOY_SSH_KEY }}
