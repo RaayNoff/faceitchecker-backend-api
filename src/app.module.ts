@@ -3,7 +3,6 @@ import { SteamApiModule } from './steam/steam-api.module';
 import { ConfigModule } from '@nestjs/config';
 import { PlayerStatsModule } from './player-stats/player-stats.module';
 import { ThrottlerModule } from '@nestjs/throttler';
-import { DevModule } from './dev/dev.module';
 
 @Module({
     imports: [
@@ -18,7 +17,6 @@ import { DevModule } from './dev/dev.module';
         ]),
         SteamApiModule,
         PlayerStatsModule,
-        DevModule,
     ],
     controllers: [],
     providers: [],
