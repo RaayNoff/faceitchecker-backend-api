@@ -5,6 +5,8 @@ export interface IFaceitPlayer {
   country: string;
   cover_image: string;
   cover_featured_image: string;
+  steam_nickname: string;
+  steam_id_64: string;
   infractions: {
     last_infraction_date: string | null;
     afk: number;

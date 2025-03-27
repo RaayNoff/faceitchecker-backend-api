@@ -1,38 +1,68 @@
 export class PlayerStatsDetailSchema {
-    player_id: string;
-    nickname: string;
-    avatar: string;
+    faceitName: string;
+    faceitUrl: string;
+    steamName: string;
+    steamUrl: string;
+    profilePictureUrl: string;
     country: string;
-    cover_image: string;
-    cover_featured_image: string;
-    infractions: {
-        last_infraction_date: string | null;
-        afk: number;
-        leaver: number;
-        qbanned: number;
-    };
-    platforms: {
-        steam?: string;
-        xbox?: string;
-        psn?: string;
-    };
-    games: Record<
-        string,
-        {
-            skill_level: number;
-            faceit_elo: number;
-            game_player_id: string;
+    cs2: {
+        general: {
+            lvl: number;
+            elo: number;
+            KD: number;
+            eloToRankDown: number;
+            eloToRankUp: number;
+            matchesCount: number;
+            winRate: number;
+            countryPosition: number;
+            regionPosition: number;
             region: string;
-            game_player_name: string;
-        }
-    >;
-    settings: {
-        language: string;
-    };
-    friends_ids: string[];
-    bans: {
-        is_banned: boolean;
-        banned_until: string | null;
-    };
-    faceit_url: string;
+        },
+        lastMatches: {
+            winsCount: number;
+            losesCount: number;
+            winRate: number;
+            eloDifference: number;
+
+            avgKills: number;
+            avgDeaths: number;
+            avgKD: number;
+            avgKR: number;
+            avgHS: number;
+
+            'KDRatioBelow.5': number;
+            'KDRatioBetween.5and1': number;
+            'KDRatioAbove1': number;
+        },
+    } | null;
+    'cs:go': {
+        general: {
+            lvl: number;
+            elo: number;
+            KD: number;
+            eloToRankDown: number;
+            eloToRankUp: number;
+            matchesCount: number;
+            winRate: number;
+            countryPosition: number;
+            regionPosition: number;
+            region: string;
+        },
+        lastMatches: {
+            winsCount: number;
+            losesCount: number;
+            winRate: number;
+            eloDifference: number;
+
+            avgKills: number;
+            avgDeaths: number;
+            avgKD: number;
+            avgKR: number;
+            avgHS: number;
+
+            'KDRatioBelow.5': number;
+            'KDRatioBetween.5and1': number;
+            'KDRatioAbove1': number;
+        },
+    } | null;
 }

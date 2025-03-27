@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { SteamApiService } from './steam-api.service';
+import { SteamApiService } from './services/steam-api.service';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({

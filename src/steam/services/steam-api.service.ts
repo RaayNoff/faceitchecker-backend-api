@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { SteamAPIUrlEnum } from './enums/SteamAPIUrlEnum';
+import { SteamAPIUrlEnum } from '../enums/SteamAPIUrlEnum';
 import { firstValueFrom } from 'rxjs';
-import { IResolveVanitySteamResponse } from './interfaces/IResolveVanitySteamResponse';
+import { IResolveVanitySteamResponse } from '../interfaces/IResolveVanitySteamResponse';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
