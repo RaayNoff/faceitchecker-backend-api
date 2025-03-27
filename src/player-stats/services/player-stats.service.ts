@@ -34,38 +34,11 @@ export class PlayerStatsService {
     }
 
     public async getPlayerStats(rawFromInput: string): Promise<PlayerStatsDetailSchema | null> {
-        const mainResponse = await this.fetchService.get<IFaceitPlayer>(
-            FACEIT_PLAYER_DETAILS,
-            { params: await this.paramsResolverService.getParamsToFetchWith(rawFromInput) },
-            true,
-        );
+        const faceitPlayer = await this.fetchPlayerData(rawFromInput);
+        if (!faceitPlayer) {return null;}
 
-        const faceitPlayer = mainResponse?.data as IFaceitPlayer;
-
-
-        const requests = [
-            { url: FACEIT_GENERAL_GAME_STATS(faceitPlayer.player_id, GameIDEnum.CS2), params: null, includeBearer: true },
-            { url: FACEIT_MATCHES_STATS(faceitPlayer.player_id, GameIDEnum.CS2), params: { limit: this.MATCHES_TO_COUNT }, includeBearer: true },
-            { url: FACEIT_ELO_APPLIES(faceitPlayer.player_id, GameIDEnum.CS2), params: { size: this.MATCHES_TO_COUNT, game_mode: '5v5' }, includeBearer: false },
-            { url: FACEIT_GENERAL_GAME_STATS(faceitPlayer.player_id, GameIDEnum.CSGO), params: null, includeBearer: true },
-            { url: FACEIT_MATCHES_STATS(faceitPlayer.player_id, GameIDEnum.CSGO), params: { limit: this.MATCHES_TO_COUNT }, includeBearer: true },
-            { url: FACEIT_ELO_APPLIES(faceitPlayer.player_id, GameIDEnum.CSGO), params: { size: this.MATCHES_TO_COUNT, game_mode: '5v5' }, includeBearer: false },
-        ];
-
-        const [cs2GeneralStats, cs2LastMatchesStats, cs2EloApplies, csgoGeneralStats, csgoLastMatchesStats, csgoEloApplies] = await Promise.all(
-            requests.map(({ url, params, includeBearer }) => this.fetchService.get(url, { params }, includeBearer))
-        ).then(responses => responses.map(res => res?.data)) as [IGeneralGameStats, ILastMatchesStats, IEloApplies[], IGeneralGameStats, ILastMatchesStats, IEloApplies[]];
-
-        const positions = [
-            { url: FACEIT_REGION_POSITION(faceitPlayer.player_id, GameIDEnum.CS2, faceitPlayer.games.cs2.region), params: null, includeBearer: true },
-            { url: FACEIT_COUNTRY_POSITION(faceitPlayer.player_id, GameIDEnum.CS2, faceitPlayer.games.cs2.region, faceitPlayer.country), params: null, includeBearer: true },
-            { url: FACEIT_REGION_POSITION(faceitPlayer.player_id, GameIDEnum.CSGO, faceitPlayer.games.csgo.region), params: null, includeBearer: true },
-            { url: FACEIT_COUNTRY_POSITION(faceitPlayer.player_id, GameIDEnum.CSGO, faceitPlayer.games.csgo.region, faceitPlayer.country), params: null, includeBearer: true },
-        ];
-
-        const [cs2RegionPosition, cs2CountryPosition, csgoRegionPosition, csgoCountryPosition] = await Promise.all(
-            positions.map(({ url, params, includeBearer }) => this.fetchService.get(url, { params }, includeBearer))
-        ).then(responses => responses.map(res => res?.data)) as [IPosition, IPosition, IPosition, IPosition];
+        const cs2Stats = await this.fetchGameStats(faceitPlayer, GameIDEnum.CS2);
+        const csgoStats = await this.fetchGameStats(faceitPlayer, GameIDEnum.CSGO);
 
         return {
             faceitName: faceitPlayer.nickname,
@@ -74,36 +47,55 @@ export class PlayerStatsService {
             steamUrl: `${this.STEAM_PROFILE_URL}${faceitPlayer.steam_id_64}`,
             profilePictureUrl: faceitPlayer.avatar,
             country: faceitPlayer.country,
-            cs2: cs2GeneralStats ? {
-                general: {
-                    lvl: faceitPlayer.games.cs2.skill_level,
-                    elo: faceitPlayer.games.cs2.faceit_elo,
-                    KD: Number(cs2GeneralStats.lifetime['Average K/D Ratio']),
-                    eloToRankDown: this.calculationService.getEloToUpOrDown(GameIDEnum.CS2, faceitPlayer.games.cs2.skill_level, faceitPlayer.games.cs2.faceit_elo, 'down'),
-                    eloToRankUp: this.calculationService.getEloToUpOrDown(GameIDEnum.CS2, faceitPlayer.games.cs2.skill_level, faceitPlayer.games.cs2.faceit_elo, 'up'),
-                    matchesCount: Number(cs2GeneralStats.lifetime.Matches),
-                    winRate: Number(cs2GeneralStats.lifetime['Win Rate %']),
-                    regionPosition: cs2RegionPosition.position,
-                    countryPosition: cs2CountryPosition.position,
-                    region: faceitPlayer.games.cs2.region,
-                },
-                lastMatches: this.calculationService.getLastMatchesStatistic(cs2LastMatchesStats, cs2EloApplies),
-            } : null,
-            'cs:go': csgoGeneralStats ? {
-                general: {
-                    lvl: faceitPlayer.games.csgo.skill_level,
-                    elo: faceitPlayer.games.csgo.faceit_elo,
-                    KD: Number(csgoGeneralStats.lifetime['Average K/D Ratio']),
-                    eloToRankDown: this.calculationService.getEloToUpOrDown(GameIDEnum.CSGO, faceitPlayer.games.csgo.skill_level, faceitPlayer.games.csgo.faceit_elo, 'down'),
-                    eloToRankUp: this.calculationService.getEloToUpOrDown(GameIDEnum.CSGO, faceitPlayer.games.csgo.skill_level, faceitPlayer.games.csgo.faceit_elo, 'up'),
-                    matchesCount: Number(csgoGeneralStats.lifetime.Matches),
-                    winRate: Number(csgoGeneralStats.lifetime['Win Rate %']),
-                    regionPosition: csgoRegionPosition.position,
-                    countryPosition: csgoCountryPosition.position,
-                    region: faceitPlayer.games.csgo.region,
-                },
-                lastMatches: this.calculationService.getLastMatchesStatistic(csgoLastMatchesStats, csgoEloApplies),
-            } : null,
+            cs2: cs2Stats ? this.mapGameStats(cs2Stats, faceitPlayer.games.cs2, GameIDEnum.CS2) : null,
+            'cs:go': csgoStats ? this.mapGameStats(csgoStats, faceitPlayer.games.csgo, GameIDEnum.CSGO) : null,
         } as PlayerStatsDetailSchema;
+    }
+
+    private async fetchPlayerData(rawFromInput: string): Promise<IFaceitPlayer | null> {
+        const response = await this.fetchService.get<IFaceitPlayer>(
+            FACEIT_PLAYER_DETAILS,
+            { params: await this.paramsResolverService.getParamsToFetchWith(rawFromInput) },
+            true,
+        );
+        return response?.data || null;
+    }
+
+    private async fetchGameStats(faceitPlayer: IFaceitPlayer, game: GameIDEnum) {
+        const [generalStats, lastMatchesStats, eloApplies, regionPosition, countryPosition] = await Promise.all([
+            this.fetchService.get<IGeneralGameStats>(FACEIT_GENERAL_GAME_STATS(faceitPlayer.player_id, game), {}, true),
+            this.fetchService.get<ILastMatchesStats>(FACEIT_MATCHES_STATS(faceitPlayer.player_id, game), { params: {limit: this.MATCHES_TO_COUNT} }, true),
+            this.fetchService.get<IEloApplies[]>(FACEIT_ELO_APPLIES(faceitPlayer.player_id, game), { params: {size: this.MATCHES_TO_COUNT, game_mode: '5v5'} }, false),
+            this.fetchService.get<IPosition>(FACEIT_REGION_POSITION(faceitPlayer.player_id, game, faceitPlayer.games[game].region), {}, true),
+            this.fetchService.get<IPosition>(FACEIT_COUNTRY_POSITION(faceitPlayer.player_id, game, faceitPlayer.games[game].region, faceitPlayer.country), {}, true),
+        ]);
+
+        return {
+            generalStats: generalStats?.data || null,
+            lastMatchesStats: lastMatchesStats?.data || null,
+            eloApplies: eloApplies?.data || [],
+            regionPosition: regionPosition?.data || null,
+            countryPosition: countryPosition?.data || null,
+        };
+    }
+
+    private mapGameStats(stats: any, gameData: any, game: GameIDEnum) {
+        if (!stats.generalStats || !stats.regionPosition || !stats.countryPosition) {return null;}
+
+        return {
+            general: {
+                lvl: gameData.skill_level,
+                elo: gameData.faceit_elo,
+                KD: Number(stats.generalStats.lifetime['Average K/D Ratio']),
+                eloToRankDown: this.calculationService.getEloToUpOrDown(game, gameData.skill_level, gameData.faceit_elo, 'down'),
+                eloToRankUp: this.calculationService.getEloToUpOrDown(game, gameData.skill_level, gameData.faceit_elo, 'up'),
+                matchesCount: Number(stats.generalStats.lifetime.Matches),
+                winRate: Number(stats.generalStats.lifetime['Win Rate %']),
+                regionPosition: stats.regionPosition.position,
+                countryPosition: stats.countryPosition.position,
+                region: gameData.region,
+            },
+            lastMatches: this.calculationService.getLastMatchesStatistic(stats.lastMatchesStats, stats.eloApplies),
+        };
     }
 }
