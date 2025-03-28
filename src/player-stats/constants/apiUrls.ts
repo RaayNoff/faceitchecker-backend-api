@@ -16,11 +16,12 @@ export const FACEIT_REGION_POSITION = (
     playerId: string,
     gameId: string,
     region: string,
-) => `https://open.faceit.com/data/v4/rankings/games/${gameId}/regions/${region.toUpperCase()}/players/${playerId}`
+) => `https://open.faceit.com/data/v4/rankings/games/${gameId}/regions/${region.toUpperCase()}/players/${playerId}`;
 
 export const FACEIT_COUNTRY_POSITION = (
     playerId: string,
     gameId: string,
     region: string,
-    country: string
-) => `https://open.faceit.com/data/v4/rankings/games/${gameId}/regions/${region.toUpperCase()}/players/${playerId}?country=${country.toLowerCase()}`
+    country: string,
+) => `https://open.faceit.com/data/v4/rankings/games/${gameId}/regions/
+${region.toUpperCase()}/players/${playerId}?country=${country.toLowerCase()}`;

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { SteamApiModule } from './steam/steam-api.module';
 import { ConfigModule } from '@nestjs/config';
-import { PlayerStatsModule } from './player-stats/player-stats.module';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { SteamApiModule } from './steam/steam-api.module';
+import { PlayerStatsModule } from './player-stats/player-stats.module';
 
 @Module({
     imports: [
@@ -21,4 +21,5 @@ import { ThrottlerModule } from '@nestjs/throttler';
     controllers: [],
     providers: [],
 })
-export class AppModule {}
+export class AppModule {
+}

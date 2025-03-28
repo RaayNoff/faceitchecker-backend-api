@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { PlayerStatsController } from './controllers/player-stats.controller';
 import { PlayerStatsService } from './services/player-stats.service';
-import { HttpModule } from '@nestjs/axios';
 import { SteamApiModule } from '../steam/steam-api.module';
 import { ParamsResolverService } from './services/params-resolver.service';
 import { CalculationService } from './services/calculation.service';

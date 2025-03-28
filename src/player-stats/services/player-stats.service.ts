@@ -1,9 +1,10 @@
+/* eslint-disable max-len */
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { IFaceitPlayer } from '../interfaces/IFaceitPlayer';
 import { PlayerStatsDetailSchema } from '../dtos/player-stats-detail-schema.dto';
 import { ParamsResolverService } from './params-resolver.service';
 import { CalculationService } from './calculation.service';
-import { ConfigService } from '@nestjs/config';
 import { FetchService } from './fetch.service';
 import { GameIDEnum } from '../enums/GameIDEnum';
 import {
@@ -22,20 +23,23 @@ import { IEloApplies } from '../interfaces/IEloApplies';
 @Injectable()
 export class PlayerStatsService {
     private readonly STEAM_PROFILE_URL = 'https://steamcommunity.com/profiles/';
+
     private readonly MATCHES_TO_COUNT: number;
 
     constructor(
-        private readonly calculationService: CalculationService,
-        private readonly paramsResolverService: ParamsResolverService,
-        private readonly configService: ConfigService,
-        private readonly fetchService: FetchService,
+    private readonly calculationService: CalculationService,
+    private readonly paramsResolverService: ParamsResolverService,
+    private readonly configService: ConfigService,
+    private readonly fetchService: FetchService,
     ) {
         this.MATCHES_TO_COUNT = this.configService.get<number>('MATCHES_TO_COUNT') || 0;
     }
 
     public async getPlayerStats(rawFromInput: string): Promise<PlayerStatsDetailSchema | null> {
         const faceitPlayer = await this.fetchPlayerData(rawFromInput);
-        if (!faceitPlayer) {return null;}
+        if (!faceitPlayer) {
+            return null;
+        }
 
         const cs2Stats = await this.fetchGameStats(faceitPlayer, GameIDEnum.CS2);
         const csgoStats = await this.fetchGameStats(faceitPlayer, GameIDEnum.CSGO);
@@ -64,8 +68,14 @@ export class PlayerStatsService {
     private async fetchGameStats(faceitPlayer: IFaceitPlayer, game: GameIDEnum) {
         const [generalStats, lastMatchesStats, eloApplies, regionPosition, countryPosition] = await Promise.all([
             this.fetchService.get<IGeneralGameStats>(FACEIT_GENERAL_GAME_STATS(faceitPlayer.player_id, game), {}, true),
-            this.fetchService.get<ILastMatchesStats>(FACEIT_MATCHES_STATS(faceitPlayer.player_id, game), { params: {limit: this.MATCHES_TO_COUNT} }, true),
-            this.fetchService.get<IEloApplies[]>(FACEIT_ELO_APPLIES(faceitPlayer.player_id, game), { params: {size: this.MATCHES_TO_COUNT, game_mode: '5v5'} }, false),
+            this.fetchService.get<ILastMatchesStats>(FACEIT_MATCHES_STATS(faceitPlayer.player_id, game), { params: { limit: this.MATCHES_TO_COUNT } }, true),
+            this.fetchService.get<IEloApplies[]>(FACEIT_ELO_APPLIES(faceitPlayer.player_id, game), {
+                params: {
+                    size: this.MATCHES_TO_COUNT,
+                    game_mode: '5v5',
+
+                },
+            }, false),
             this.fetchService.get<IPosition>(FACEIT_REGION_POSITION(faceitPlayer.player_id, game, faceitPlayer.games[game].region), {}, true),
             this.fetchService.get<IPosition>(FACEIT_COUNTRY_POSITION(faceitPlayer.player_id, game, faceitPlayer.games[game].region, faceitPlayer.country), {}, true),
         ]);
@@ -80,7 +90,9 @@ export class PlayerStatsService {
     }
 
     private mapGameStats(stats: any, gameData: any, game: GameIDEnum) {
-        if (!stats.generalStats || !stats.regionPosition || !stats.countryPosition) {return null;}
+        if (!stats.generalStats || !stats.regionPosition || !stats.countryPosition) {
+            return null;
+        }
 
         return {
             general: {

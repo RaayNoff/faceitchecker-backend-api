@@ -4,8 +4,11 @@ import { Request } from 'express';
 
 export declare class ContextDto {
     request: Request;
+
     ipAddress: string;
+
     userAgent?: string;
+
     language?: string;
 }
 
@@ -17,7 +20,7 @@ export const Context = createParamDecorator(
 
         return {
             request,
-            ipAddress: ipAddress,
+            ipAddress,
             userAgent: request.headers['user-agent'],
             language: request.headers['accept-language'],
         } as ContextDto;

@@ -1,6 +1,6 @@
 export interface IResolveVanitySteamResponse {
   response: {
-    steamid: string;
-    [key: string]: unknown;
-  };
+    steamid: string,
+    [key: string]: unknown,
+  },
 }

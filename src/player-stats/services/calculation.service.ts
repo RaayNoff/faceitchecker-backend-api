@@ -5,7 +5,6 @@ import { GameIDEnum } from '../enums/GameIDEnum';
 
 @Injectable()
 export class CalculationService {
-
     SKILL_LEVELS_BY_GAME = {
         csgo: {
             1: [1, 800],
@@ -36,15 +35,14 @@ export class CalculationService {
     constructor() {
     }
 
-
     public getLastMatchesStatistic(
         lastMatchesStatistic: ILastMatchesStats,
         eloAppliedForMatches: IEloApplies[],
     ) {
         const aggregatedStats = lastMatchesStatistic.items.reduce((acc, item) => {
-            const result = Number(item.stats['Result']);
-            const kills = Number(item.stats['Kills']);
-            const deaths = Number(item.stats['Deaths']);
+            const result = Number(item.stats.Result);
+            const kills = Number(item.stats.Kills);
+            const deaths = Number(item.stats.Deaths);
             const kd = Number(item.stats['K/D Ratio']);
             const kr = Number(item.stats['K/R Ratio']);
             const hs = Number(item.stats['Headshots %']);
@@ -67,7 +65,16 @@ export class CalculationService {
 
             return acc;
         }, {
-            wins: 0, loses: 0, kills: 0, deaths: 0, kd: 0, kr: 0, hs: 0, kdBelow_5: 0, kdBetween_5_1: 0, kdAbove_1: 0,
+            wins: 0,
+            loses: 0,
+            kills: 0,
+            deaths: 0,
+            kd: 0,
+            kr: 0,
+            hs: 0,
+            kdBelow_5: 0,
+            kdBetween_5_1: 0,
+            kdAbove_1: 0,
         });
 
         const matchesCount = lastMatchesStatistic.items.length;
@@ -83,17 +90,18 @@ export class CalculationService {
             avgHS: (aggregatedStats.hs / matchesCount).toFixed(2),
             'KDRatioBelow.5': (aggregatedStats.kdBelow_5 / matchesCount).toFixed(2),
             'KDRatioBetween.5and1': (aggregatedStats.kdBetween_5_1 / matchesCount).toFixed(2),
-            'KDRatioAbove1': (aggregatedStats.kdAbove_1 / matchesCount).toFixed(2),
+            KDRatioAbove1: (aggregatedStats.kdAbove_1 / matchesCount).toFixed(2),
         };
     }
 
     public getEloToUpOrDown(game: GameIDEnum, lvl: number, currentElo: number, type: 'up' | 'down') {
         const [lowEdge, upEdge] = this.SKILL_LEVELS_BY_GAME[game][lvl];
 
+        // eslint-disable-next-line no-nested-ternary
         return type === 'up'
             ? upEdge <= currentElo
                 ? 0
                 : upEdge - currentElo
-            : currentElo - lowEdge
+            : currentElo - lowEdge;
     }
 }

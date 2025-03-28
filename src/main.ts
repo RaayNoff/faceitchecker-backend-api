@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import { AppModule } from './app.module';
 
 function validateEnvVariables(configService: ConfigService) {
     const requiredEnvVars = [
@@ -41,7 +41,6 @@ async function bootstrap() {
     );
 
     SwaggerModule.setup('api/docs', app, documentFactory);
-
 
     await app.listen(process.env.PORT ?? 3000);
 }

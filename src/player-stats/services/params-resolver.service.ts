@@ -6,15 +6,14 @@ import { SteamApiService } from '../../steam/services/steam-api.service';
 export class ParamsResolverService {
     private readonly RegExpMap = new Map<string, RegExp>([
         [RawInputTypeEnum.STEAM_ID64, /^\d{17}$/],
-        [RawInputTypeEnum.FACEIT_NICKNAME, /^[a-zA-Z0-9_\-]{3,16}$/],
+        [RawInputTypeEnum.FACEIT_NICKNAME, /^[a-zA-Z0-9_-]{3,16}$/],
         [
             RawInputTypeEnum.STEAM_URL,
             /^https?:\/\/steamcommunity\.com\/(profiles\/\d{17}|id\/[a-zA-Z0-9_-]+)\/?$/,
         ],
     ]);
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-    private readonly FetchByTypeMap = new Map<string, Function>([
+    private readonly FetchByTypeMap = new Map<string, any>([
         [RawInputTypeEnum.FACEIT_NICKNAME, this.getParamsNickname.bind(this)],
         [RawInputTypeEnum.STEAM_ID64, this.getParamsSteamId64.bind(this)],
         [RawInputTypeEnum.STEAM_URL, this.getParamsBySteamUrl.bind(this)],
@@ -39,7 +38,6 @@ export class ParamsResolverService {
             throw new BadRequestException(`Cannot determine type of fetch by prompt: ${trimmedInput}`);
         }
 
-
         return fetchFunction(trimmedInput);
     }
 
@@ -48,7 +46,7 @@ export class ParamsResolverService {
     }
 
     private async getParamsSteamId64(steamId64: string) {
-        return { game_player_id: steamId64 }
+        return { game_player_id: steamId64 };
     }
 
     private async getParamsBySteamUrl(steamUrl: string) {
@@ -79,6 +77,7 @@ export class ParamsResolverService {
     }
 
     private detectInputType(input: string) {
+        // eslint-disable-next-line no-restricted-syntax
         for (const [rawInputType, regExp] of this.RegExpMap.entries()) {
             if (regExp.test(input)) {
                 return rawInputType;
