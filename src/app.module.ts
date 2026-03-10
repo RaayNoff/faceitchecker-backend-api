@@ -12,7 +12,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
         ThrottlerModule.forRoot([
             {
                 ttl: 10000,
-                limit: 10,
+                limit: 100,
             },
         ]),
         SteamApiModule,
