@@ -1,9 +1,9 @@
 name: Lint PR title
 
 on:
-  pull_request_target:
-    branches: [master]
+  pull_request:
     types: [opened, edited, reopened, synchronize]
+  workflow_dispatch:
 
 jobs:
   pr-lint:
