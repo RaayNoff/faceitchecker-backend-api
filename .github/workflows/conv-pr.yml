@@ -1,0 +1,26 @@
+name: Lint PR title
+
+on:
+  pull_request_target:
+    branches: [master]
+    types: [opened, edited, reopened, synchronize]
+
+jobs:
+  pr-lint:
+    name: Validate PR title via commitlint
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - name: Lint PR title
+        shell: bash
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          printf "%s" "${PR_TITLE}" | \
+            npx --yes \
+              --package @commitlint/cli \
+              --package @commitlint/config-conventional \
+              commitlint \
+              --extends @commitlint/config-conventional \
+              --verbose
