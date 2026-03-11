@@ -1,9 +1,9 @@
 name: Lint PR title
 
 on:
-  pull_request_target:
-    branches: [master]
+  pull_request:
     types: [opened, edited, reopened, synchronize]
+  workflow_dispatch:
 
 jobs:
   pr-lint:
@@ -12,7 +12,10 @@ jobs:
     permissions:
       pull-requests: read
     steps:
-      - name: Lint PR title
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Lint PR title with commitlint config
         shell: bash
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
@@ -22,5 +25,5 @@ jobs:
               --package @commitlint/cli \
               --package @commitlint/config-conventional \
               commitlint \
-              --extends @commitlint/config-conventional \
+              --config commitlint.config.cjs \
               --verbose
