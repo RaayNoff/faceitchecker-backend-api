@@ -1,31 +1,19 @@
-name: Lint PR title
+name: 'Lint PR'
 
 on:
-  pull_request:
-    branches:
-      - master
-    types: [opened, edited, reopened, synchronize]
-  workflow_dispatch:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
 
 jobs:
-  pr-lint:
-    name: Validate PR title via commitlint
+  main:
+    name: Validate PR title
     runs-on: ubuntu-latest
     permissions:
       pull-requests: read
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Lint PR title with commitlint config
-        shell: bash
+      - uses: step-security/action-semantic-pull-request@v6
         env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-        run: |
-          printf "%s" "${PR_TITLE}" | \
-            npx --yes \
-              --package @commitlint/cli \
-              --package @commitlint/config-conventional \
-              commitlint \
-              --config commitlint.config.cjs \
-              --verbose
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
